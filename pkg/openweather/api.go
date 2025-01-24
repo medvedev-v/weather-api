@@ -11,7 +11,7 @@ type ShortWeather struct {
 	weatherType string
 }
 
-func AskForecast(location string, apikey string) ShortWeather {
+func AskCurrentWeatherShort(location string, apikey string) ShortWeather {
 	var weatherUrl string = "https://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + apikey
 	response := client.Get(weatherUrl)
 	data := parser.JsonToWeatherStruct(response)
