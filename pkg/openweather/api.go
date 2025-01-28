@@ -6,20 +6,20 @@ import (
 )
 
 type ShortWeather struct {
-	location    string
-	temperature float64
-	weatherType string
+	Location    string
+	Temperature float64
+	WeatherType string
 }
 
 func AskCurrentWeatherShort(location string, apikey string) ShortWeather {
-	var weatherUrl string = "https://api.openweathermap.org/data/2.5/weather?q=" + location + "&appid=" + apikey
+	var weatherUrl string = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=" + location + "&appid=" + apikey
 	response := client.Get(weatherUrl)
 	data := parser.JsonToWeatherStruct(response)
 
 	shortResponse := ShortWeather{
-		location:    data.Name,
-		temperature: data.Main.Temp,
-		weatherType: data.Weather[0].Description,
+		Location:    data.Name,
+		Temperature: data.Main.Temp,
+		WeatherType: data.Weather[0].Main,
 	}
 
 	return shortResponse
