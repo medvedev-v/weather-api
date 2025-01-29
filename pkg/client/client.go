@@ -15,7 +15,6 @@ func Get(url string) []byte {
 		panic(error)
 	}
 
-	fmt.Println(url)
 	fmt.Println(response.Status)
 
 	data, error := io.ReadAll(response.Body)

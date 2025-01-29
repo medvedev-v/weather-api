@@ -13,43 +13,31 @@ type RequestWeather struct {
 	Location string `json:"location"`
 }
 
-type ResponseWeather struct {
-	Location    string  `json:"location"`
-	Temperature float64 `json:"temperature"`
-	WeatherType string  `json:"weathertype"`
-}
-
-func handleRequest(w http.ResponseWriter, r *http.Request) {
+func handleRequest(writer http.ResponseWriter, request *http.Request) {
 	config := parser.InitConfig()
 
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	if request.Method != http.MethodGet {
+		http.Error(writer, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	var req RequestWeather
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+	var requestWeather RequestWeather
+	if error := json.NewDecoder(request.Body).Decode(&requestWeather); error != nil {
+		http.Error(writer, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
 
-	if req.Location == "" {
-		http.Error(w, "Name and Value are required", http.StatusBadRequest)
+	if requestWeather.Location == "" {
+		http.Error(writer, "Location is required", http.StatusBadRequest)
 		return
 	}
 
-	opeanweatherResponse := openweather.AskCurrentWeatherShort(req.Location, config.OpenweatherKey)
+	response := openweather.AskCurrentWeatherShort(requestWeather.Location, config.OpenweatherKey)
 
-	resp := ResponseWeather{
-		Location:    opeanweatherResponse.Location,
-		Temperature: opeanweatherResponse.Temperature,
-		WeatherType: opeanweatherResponse.WeatherType,
-	}
+	writer.Header().Set("Content-Type", "application/json")
 
-	w.Header().Set("Content-Type", "application/json")
-
-	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	if error := json.NewEncoder(writer).Encode(response); error != nil {
+		http.Error(writer, "Failed to encode response", http.StatusInternalServerError)
 		return
 	}
 }

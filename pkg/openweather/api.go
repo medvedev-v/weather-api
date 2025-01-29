@@ -9,6 +9,9 @@ type ShortWeather struct {
 	Location    string
 	Temperature float64
 	WeatherType string
+	Pressure    int
+	Humidity    int
+	WindSpeed   float64
 }
 
 func AskCurrentWeatherShort(location string, apikey string) ShortWeather {
@@ -20,6 +23,9 @@ func AskCurrentWeatherShort(location string, apikey string) ShortWeather {
 		Location:    data.Name,
 		Temperature: data.Main.Temp,
 		WeatherType: data.Weather[0].Main,
+		Pressure:    data.Main.Pressure,
+		Humidity:    data.Main.Humidity,
+		WindSpeed:   data.Wind.Speed,
 	}
 
 	return shortResponse
